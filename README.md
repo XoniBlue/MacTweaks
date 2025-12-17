@@ -42,10 +42,10 @@ Safe on Apple Silicon too (though gains are smaller).
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/sequoia-perf-toolkit.git
-cd sequoia-perf-toolkit/bin
-chmod +x sequoia-perf-toolkit.sh
-./sequoia-perf-toolkit.sh
+git clone https://github.com/XoniBlue/MacTweaks.git
+cd MacTweaks/bin
+chmod +x mac-tweaks.sh
+./mac-tweaks.sh
 ```
 
 Enter your password when prompted — the toolkit needs admin rights for some changes.
@@ -62,13 +62,13 @@ Enter your password when prompted — the toolkit needs admin rights for some ch
 
 ```bash
 # Apply max profile
-./sequoia-perf-toolkit.sh --apply-profile max
+./mac-tweaks.sh --apply-profile max
 
 # Revert everything
-./sequoia-perf-toolkit.sh --revert-profile all
+./mac-tweaks.sh --revert-profile all
 
 # Generate report now
-./sequoia-perf-toolkit.sh --report
+./mac-tweaks.sh --report
 ```
 
 ## Safety & Reverting
@@ -89,8 +89,8 @@ See [MODULES.md](MODULES.md) for a full breakdown of **exactly what commands** e
 ## Folder Structure
 
 ```
-sequoia-perf-toolkit/
-├── bin/sequoia-perf-toolkit.sh     ← Main launcher
+mac-tweaks/
+├── bin/mac-tweaks.sh     ← Main launcher
 ├── lib/                            ← Core functions
 ├── modules/                        ← Individual tweaks
 ├── README.md                       ← This file
