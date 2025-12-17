@@ -1,4 +1,3 @@
-### 1. Updated README.md (with your requested Intel Mac struggle section)
 
 ```markdown
 # Sequoia Performance Toolkit
