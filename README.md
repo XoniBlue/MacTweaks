@@ -1,46 +1,4 @@
 
-```markdown
-# Sequoia Performance Toolkit
-
-[![macOS](https://img.shields.io/badge/macOS-Sequoia%2015.x-blue)](https://www.apple.com/macos/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-2.1.0-brightgreen)](.)
-
-A **powerful, modular, and safe** optimization toolkit for **macOS Sequoia (15.x)** — created specifically to help older Intel Macs breathe again.
-
-### Why This Toolkit Exists
-
-macOS Sequoia (15.x) introduced beautiful new features — but also heavy background processes like Apple Intelligence, enhanced Spotlight indexing, Live Activities, and more aggressive power management. On **older Intel Macs** (like the 2019 13" MacBook Pro with Core i5 and 8 GB RAM), this often results in:
-
-- High idle CPU usage and fan spin-up
-- Noticeable UI lag and slow window resizing
-- Reduced battery life
-- Thermal throttling during light tasks
-- Slower overall responsiveness compared to Ventura or Sonoma
-
-Downgrading is one solution — but many users (including the author) want to stay on Sequoia for security updates and new app compatibility.
-
-**This toolkit is the answer**: a carefully curated set of safe, reversible tweaks that disable the most resource-intensive background features while keeping the system stable and usable.
-
-Tested extensively on a 2019 Intel Core i5 MacBook Pro with 8 GB RAM — delivering cooler temperatures, lower CPU usage, snappier UI, and longer battery life without sacrificing core functionality.
-
-Safe on Apple Silicon too (though gains are smaller).
-
-## Features
-
-- **Three curated profiles**: `max` (aggressive), `balanced` (daily driver), `battery` (power saving)
-- **20+ optimization modules** (see full list in [MODULES.md](MODULES.md))
-- **Automatic before/after snapshots** with CPU, memory, I/O, and thermal data
-- **One-shot post-reboot report** — runs automatically once after restart
-- **Dry-run mode** — simulate changes safely
-- **Preference backups** before major changes
-- **Export reports to Desktop**
-- **Full revert capability** (including "revert all")
-- **Idempotent & guarded** — safe to re-run
-- **Detailed logging**
-
-## Installation
-
 ```bash
 git clone https://github.com/XoniBlue/MacTweaks.git
 cd MacTweaks/bin
