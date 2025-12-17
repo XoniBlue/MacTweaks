@@ -1,6 +1,23 @@
-# lib/help.sh
-# Comprehensive help screen with all new features
+###############################################################################
+# MacTweaks/lib/help.sh
+# Help screen display for the MacTweaks toolkit.
+#
+# DESCRIPTION:
+#   Displays comprehensive usage information, command reference, profile
+#   descriptions, and feature documentation.
+#
+# FUNCTIONS:
+#   help_screen - Display full help documentation
+#
+# DEPENDENCIES:
+#   Uses APP_NAME and VERSION from config.sh
+###############################################################################
 
+###############################################################################
+# help_screen() - Display comprehensive help documentation
+# Shows all available commands, profiles, features, and usage notes.
+# Waits for user to press ENTER before returning.
+###############################################################################
 help_screen() {
 cat <<EOF
 $APP_NAME v$VERSION
