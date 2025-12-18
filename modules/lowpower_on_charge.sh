@@ -1,40 +1,29 @@
-#!/bin/zsh
+###############################################################################
+# MacTweaks/modules/lowpower_on_charge.sh
+# Module: Low Power Mode while charging
 #
-# lowpower_on_charge.sh
+# DESCRIPTION:
+#   Installs a LaunchAgent that toggles Low Power Mode based on charging state.
+#   When plugged into AC and below 100%, Low Power Mode is enabled to reduce
+#   thermals; once the battery is full, Low Power Mode is disabled.
 #
-# Enables Low Power Mode when charging
-# Disables it when battery reaches 100%
+# ARTIFACTS:
+#   - Installs: ~/.mactweaks/lowpower_on_charge.sh
+#   - LaunchAgent: ~/Library/LaunchAgents/com.mactweaks.lowpower_on_charge.plist
 #
+# PROFILES: None by default (run manually via module menu/flag)
+###############################################################################
 
-set -euo pipefail
-
-# Get battery percentage
-BATTERY_PERCENT=$(
-  pmset -g batt | grep -o "[0-9]\+%" | tr -d '%'
-)
-
-# Detect AC power
-if pmset -g batt | grep -q "AC Power"; then
-  ON_AC=1
-else
-  ON_AC=0
-fi
-
-# Function to safely run pmset with elevation
-run_pmset() {
-  if [[ "$EUID" -ne 0 ]]; then
-    sudo -n pmset -a lowpowermode "$1" 2>/dev/null || true
-  else
-    pmset -a lowpowermode "$1"
-  fi
+# Apply: Install LaunchAgent to manage Low Power Mode while charging
+m_lowpower_on_charge_apply() {
+  info "[lowpower_on_charge] Installing LaunchAgent for Low Power on charge"
+  run_module_script lowpower_on_charge install
+  ok "[lowpower_on_charge] LaunchAgent installed"
 }
 
-# Enable Low Power while charging and not full
-if [[ "$ON_AC" -eq 1 && "$BATTERY_PERCENT" -lt 100 ]]; then
-  run_pmset 1
-fi
-
-# Disable Low Power when full
-if [[ "$BATTERY_PERCENT" -eq 100 ]]; then
-  run_pmset 0
-fi
+# Revert: Remove LaunchAgent and restore default power state
+m_lowpower_on_charge_revert() {
+  info "[lowpower_on_charge] Removing LaunchAgent and disabling Low Power Mode"
+  run_module_script lowpower_on_charge uninstall
+  ok "[lowpower_on_charge] LaunchAgent removed"
+}
