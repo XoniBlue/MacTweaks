@@ -11,10 +11,11 @@
 #   confirm           - Prompt user for yes/no confirmation
 #   restart_ui        - Restart Finder and Dock to apply UI changes
 #   pmset_set         - Safely set power management values
-#   defaults_del      - Safely delete defaults key
+#   defaults_del      - Safely delete a defaults key
 #   launchctl_disable_safe - Safely disable a launchd service
 #   launchctl_enable_safe  - Safely enable a launchd service
 #   NOW_STAMP         - Generate timestamp string for filenames
+#   run_module_script - Execute a module's installer/uninstaller script
 #   list_modules      - Display all available modules
 #   apply_module      - Execute a module's apply function
 #   revert_module     - Execute a module's revert function
@@ -132,6 +133,24 @@ launchctl_enable_safe() {
 #   Timestamp in format: YYYY-MM-DD_HH-MM-SS
 ###############################################################################
 NOW_STAMP() { date '+%Y-%m-%d_%H-%M-%S'; }
+
+###############################################################################
+# run_module_script() - Execute a module's helper script
+# Safely runs a module's install/uninstall script located under modules/<name>/.
+# Uses zsh explicitly so scripts do not need the executable bit set.
+#
+# Arguments:
+#   $1 - Module directory name (e.g., lowpower_on_charge)
+#   $2 - Script base name without extension (install or uninstall)
+###############################################################################
+run_module_script() {
+  local module="$1"; local action="$2"
+  local script="$ROOT_DIR/modules/$module/$action.sh"
+
+  [[ -f "$script" ]] || die "Missing $action script for module '$module': $script"
+
+  zsh "$script"
+}
 
 ###############################################################################
 # list_modules() - Display available modules
