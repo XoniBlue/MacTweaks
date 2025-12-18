@@ -1,6 +1,6 @@
 ###############################################################################
 # MacTweaks/modules/exportreport.sh
-# Module: Export report to Desktop
+# Module: exportreport
 #
 # DESCRIPTION:
 #   Copies the most recent performance report to the user's Desktop for
@@ -9,24 +9,37 @@
 # OUTPUT:
 #   ~/Desktop/SequoiaPerf_Report_YYYYMMDD_HHMM.txt
 #
-# PROFILES: max (as final step)
+# PROFILES:
+#   - max (as final step)
 #
-# NOTE: Only exports the latest report. If no reports exist, shows a warning.
+# NOTE:
+#   - Only exports the latest report
+#   - If no reports exist, a warning is shown
 ###############################################################################
 
-# Apply: Copy latest report to Desktop with timestamp
-m_exportreport_apply() {
-  # Find the most recent report file (sorted by modification time)
-  local latest_report="$(ls -t "$REPORT_DIR"/report_*.txt 2>/dev/null | head -n1)"
+apply_exportreport() {
+  info "Applying module: exportreport"
 
-  if [[ -n "$latest_report" ]]; then
-    # Copy to Desktop with new timestamped filename
-    cp "$latest_report" ~/Desktop/SequoiaPerf_Report_$(date '+%Y%m%d_%H%M').txt"
-    ok "Report exported to Desktop"
+  # Ensure report directory exists
+  if [[ ! -d "$REPORT_DIR" ]]; then
+    warn "Report directory not found: $REPORT_DIR"
+    return 0
+  fi
+
+  # Find the most recent report file
+  local latest_report
+  latest_report="$(ls -t "$REPORT_DIR"/report_*.txt 2>/dev/null | head -n1)"
+
+  if [[ -n "$latest_report" && -f "$latest_report" ]]; then
+    local dest="$HOME/Desktop/SequoiaPerf_Report_$(date '+%Y%m%d_%H%M').txt"
+    cp "$latest_report" "$dest"
+    ok "Report exported to Desktop: $(basename "$dest")"
   else
-    warn "No recent report found"
+    warn "No recent report found to export"
   fi
 }
 
-# Revert: No-op (exported file is left on Desktop, user can delete manually)
-m_exportreport_revert() { true; }
+revert_exportreport() {
+  # No-op: exported files are intentionally left on Desktop
+  true
+}
