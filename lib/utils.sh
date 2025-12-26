@@ -172,7 +172,13 @@ list_modules() {
 ###############################################################################
 apply_module() {
   local m="$1"
-  "m_${m}_apply"
+  local fn="m_${m}_apply"
+  if declare -F "$fn" >/dev/null; then
+    "$fn"
+  else
+    warn "Missing apply function for module: $m ($fn)"
+    return 0
+  fi
 }
 
 ###############################################################################
@@ -185,5 +191,45 @@ apply_module() {
 ###############################################################################
 revert_module() {
   local m="$1"
-  "m_${m}_revert"
+  local fn="m_${m}_revert"
+  if declare -F "$fn" >/dev/null; then
+    "$fn"
+  else
+    warn "Missing revert function for module: $m ($fn)"
+    return 0
+  fi
+}
+
+###############################################################################
+# progress_bar() - Display a simple terminal progress bar
+# Shows progress for long-running operations like applying/reverting modules.
+#
+# Arguments:
+#   $1 - Current step (1-based)
+#   $2 - Total steps
+#   $3 - Label (module name or action)
+###############################################################################
+progress_bar() {
+  local current="$1"
+  local total="$2"
+  local label="${3:-}"
+
+  [[ "$total" -gt 0 ]] || return 0
+
+  local width=28
+  local percent=$((current * 100 / total))
+  local filled=$((percent * width / 100))
+  local empty=$((width - filled))
+  local bar
+  bar="$(printf "%${filled}s" "" | tr ' ' '#')"
+  bar="$bar$(printf "%${empty}s" "" | tr ' ' '-')"
+
+  printf "\r[%s] %3d%% (%d/%d) %s" "$bar" "$percent" "$current" "$total" "$label"
+}
+
+###############################################################################
+# progress_done() - Finish a progress bar line
+###############################################################################
+progress_done() {
+  echo
 }

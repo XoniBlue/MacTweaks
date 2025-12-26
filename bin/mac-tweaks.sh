@@ -156,13 +156,11 @@ main() {
       local before_path
       before_path="$(snapshot_collect before "$stamp")"
 
-      # Set up post-reboot report generation
-      postreboot_install_once "$stamp" "$before_path"
-
       # Apply the profile
       apply_profile "$profile"
 
       # Prompt for reboot (required for full effect)
+      postreboot_install_once "$stamp" "$before_path"
       reboot_countdown 20
       ;;
 
@@ -176,13 +174,11 @@ main() {
       local before_path
       before_path="$(snapshot_collect before "$stamp")"
 
-      # Set up post-reboot report generation
-      postreboot_install_once "$stamp" "$before_path"
-
       # Revert the profile
       revert_profile "$profile"
 
       # Prompt for reboot (required for full effect)
+      postreboot_install_once "$stamp" "$before_path"
       reboot_countdown 20
       ;;
 
@@ -199,9 +195,6 @@ main() {
       local before_path
       before_path="$(snapshot_collect before "$stamp")"
 
-      # Set up post-reboot report generation
-      postreboot_install_once "$stamp" "$before_path"
-
       # Apply or revert the module
       if [[ "$action" == "--apply" ]]; then
         apply_module "$mod"
@@ -213,6 +206,7 @@ main() {
       restart_ui
 
       # Prompt for reboot (required for full effect)
+      postreboot_install_once "$stamp" "$before_path"
       reboot_countdown 20
       ;;
 
