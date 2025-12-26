@@ -17,6 +17,7 @@
 #   $LA_PLIST    - LaunchAgent plist to trigger post_reboot.sh
 #   $APP_DIR/last_stamp.txt       - Saved timestamp for report matching
 #   $APP_DIR/last_before_path.txt - Path to before snapshot
+#   $APP_DIR/last_boot_time.txt   - Boot time recorded at install
 #
 # LAUNCHAGENT BEHAVIOR:
 #   - Runs at login (RunAtLoad=true)
@@ -48,12 +49,15 @@
 postreboot_install_once() {
   local stamp="$1"
   local before_path="$2"
+  local boot_time
 
   # Write state files - these track the pending post-reboot task
   # The post_reboot.sh script checks for these to know it should run
   mkdir -p "$APP_DIR"
   echo "$stamp" > "$APP_DIR/last_stamp.txt"
   echo "$before_path" > "$APP_DIR/last_before_path.txt"
+  boot_time="$(sysctl -n kern.boottime 2>/dev/null | awk -F'[ ,]' '/sec/{print $4}')"
+  echo "$boot_time" > "$APP_DIR/last_boot_time.txt"
 
   # Create the post-reboot script
   # Note: Uses 'EOS' (quoted) to prevent variable expansion in heredoc
@@ -66,6 +70,7 @@ STATE_DIR="$APP_DIR/state"
 REPORT_DIR="$APP_DIR/reports"
 LA_PLIST="$HOME/Library/LaunchAgents/com.mactweaks.postreboot.plist"
 POST_SCRIPT="$APP_DIR/post_reboot.sh"
+BOOT_TIME_FILE="$APP_DIR/last_boot_time.txt"
 
 # ==== SAFETY CHECK: only run if state files exist and match expected format ====
 if [[ ! -f "$APP_DIR/last_stamp.txt" ]] || [[ ! -f "$APP_DIR/last_before_path.txt" ]]; then
@@ -76,11 +81,21 @@ fi
 
 stamp="$(cat "$APP_DIR/last_stamp.txt")"
 before_path="$(cat "$APP_DIR/last_before_path.txt")"
+expected_boot_time=""
+current_boot_time="$(sysctl -n kern.boottime 2>/dev/null | awk -F'[ ,]' '/sec/{print $4}')"
+if [[ -f "$BOOT_TIME_FILE" ]]; then
+  expected_boot_time="$(cat "$BOOT_TIME_FILE")"
+fi
+
+if [[ -n "$expected_boot_time" ]] && [[ "$current_boot_time" == "$expected_boot_time" ]]; then
+  echo "Reboot not detected yet — will run after next reboot."
+  exit 0
+fi
 
 # Validate that the before snapshot actually exists
 if [[ ! -f "$before_path" ]]; then
   echo "Before snapshot missing — nothing to compare. Cleaning up."
-  rm -f "$LA_PLIST" "$POST_SCRIPT" "$APP_DIR/last_stamp.txt" "$APP_DIR/last_before_path.txt" 2>/dev/null || true
+  rm -f "$LA_PLIST" "$POST_SCRIPT" "$APP_DIR/last_stamp.txt" "$APP_DIR/last_before_path.txt" "$BOOT_TIME_FILE" 2>/dev/null || true
   exit 0
 fi
 
@@ -131,7 +146,7 @@ open "$report_path"
 
 # === Self-cleanup ===
 launchctl unload "$LA_PLIST" 2>/dev/null || true
-rm -f "$LA_PLIST" "$POST_SCRIPT" "$APP_DIR/last_stamp.txt" "$APP_DIR/last_before_path.txt" 2>/dev/null || true
+rm -f "$LA_PLIST" "$POST_SCRIPT" "$APP_DIR/last_stamp.txt" "$APP_DIR/last_before_path.txt" "$BOOT_TIME_FILE" 2>/dev/null || true
 
 EOS
 

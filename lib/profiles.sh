@@ -117,9 +117,14 @@ apply_profile() {
   fi
 
   # Apply each module in sequence
-  for m in $mods; do
+  local arr=($mods)
+  local total="${#arr[@]}"
+  for (( i=0; i<total; i++ )); do
+    local m="${arr[$i]}"
+    progress_bar "$((i + 1))" "$total" "apply: $m"
     apply_module "$m"
   done
+  progress_done
 
   # Restart UI elements to apply visual changes
   restart_ui
@@ -157,9 +162,15 @@ revert_profile() {
   # Convert to array and iterate in reverse order
   # Reverse order ensures proper cleanup of dependent settings
   local arr=($mods)
-  for (( i=${#arr[@]}-1; i>=0; i-- )); do
-    revert_module "${arr[$i]}"
+  local total="${#arr[@]}"
+  local step=1
+  for (( i=total-1; i>=0; i-- )); do
+    local m="${arr[$i]}"
+    progress_bar "$step" "$total" "revert: $m"
+    revert_module "$m"
+    step=$((step + 1))
   done
+  progress_done
 
   # Restart UI elements to apply visual changes
   restart_ui
