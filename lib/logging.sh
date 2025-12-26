@@ -29,7 +29,7 @@
 # Output:
 #   Appends to LOG_FILE with HH:MM:SS timestamp prefix
 ###############################################################################
-log() { printf "%s %s\n" "$(date '+%H:%M:%S')" "$*" | tee -a "$LOG_FILE" >/dev/null; }
+log() { printf "%s %s\n" "$(date '+%H:%M:%S')" "$*" | tee -a "$LOG_FILE"; }
 
 ###############################################################################
 # info() - Log an informational message

@@ -1,5 +1,5 @@
 ###############################################################################
-# MacTweaks/modules/maitenance.sh
+# MacTweaks/modules/maintenance.sh
 # Module: System maintenance tasks
 #
 # DESCRIPTION:
@@ -23,7 +23,7 @@
 ###############################################################################
 
 # Apply: Run system maintenance tasks
-m_maitenance_apply() {
+m_maintenance_apply() {
   info "[maintenance] Running safe system maintenance tasks"
 
   # Flush DNS cache to clear stale entries
@@ -42,7 +42,11 @@ m_maitenance_apply() {
 }
 
 # Revert: No-op (maintenance tasks don't need reverting)
-m_maitenance_revert() {
+m_maintenance_revert() {
   info "[maintenance] No revert needed (maintenance is idempotent)"
   true
 }
+
+# Backwards compatibility (typo'd function names used by older profiles)
+m_maitenance_apply() { m_maintenance_apply; }
+m_maitenance_revert() { m_maintenance_revert; }
