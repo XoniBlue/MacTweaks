@@ -112,15 +112,15 @@ menu_apply_profile() {
   before_path="$(snapshot_collect before "$stamp")"
   ok "BEFORE saved: $before_path"
 
-  # Set up automatic post-reboot report
-  postreboot_install_once "$stamp" "$before_path"
-
   # Apply the selected profile
   apply_profile "$profile"
 
   # Reboot is recommended for full effect
   warn "Restart recommended/required for full effect."
-  if confirm "Auto-reboot now with countdown?"; then reboot_countdown 20; fi
+  if confirm "Auto-reboot now with countdown?"; then
+    postreboot_install_once "$stamp" "$before_path"
+    reboot_countdown 20
+  fi
 }
 
 ###############################################################################
@@ -157,15 +157,15 @@ menu_revert_profile() {
   before_path="$(snapshot_collect before "$stamp")"
   ok "BEFORE saved: $before_path"
 
-  # Set up automatic post-reboot report
-  postreboot_install_once "$stamp" "$before_path"
-
   # Revert the selected profile
   revert_profile "$profile"
 
   # Reboot is recommended for full effect
   warn "Restart recommended/required for full effect."
-  if confirm "Auto-reboot now with countdown?"; then reboot_countdown 20; fi
+  if confirm "Auto-reboot now with countdown?"; then
+    postreboot_install_once "$stamp" "$before_path"
+    reboot_countdown 20
+  fi
 }
 
 ###############################################################################
@@ -206,9 +206,6 @@ menu_module() {
   before_path="$(snapshot_collect before "$stamp")"
   ok "BEFORE saved: $before_path"
 
-  # Set up automatic post-reboot report
-  postreboot_install_once "$stamp" "$before_path"
-
   # Execute the requested action
   if [[ "$action" == "apply" ]]; then
     apply_module "$mod"
@@ -221,7 +218,10 @@ menu_module() {
 
   # Reboot is recommended for full effect
   warn "Restart recommended/required for full effect."
-  if confirm "Auto-reboot now with countdown?"; then reboot_countdown 20; fi
+  if confirm "Auto-reboot now with countdown?"; then
+    postreboot_install_once "$stamp" "$before_path"
+    reboot_countdown 20
+  fi
 }
 
 ###############################################################################

@@ -17,7 +17,7 @@
 #   - If no reports exist, a warning is shown
 ###############################################################################
 
-apply_exportreport() {
+m_exportreport_apply() {
   info "Applying module: exportreport"
 
   # Ensure report directory exists
@@ -39,7 +39,11 @@ apply_exportreport() {
   fi
 }
 
-revert_exportreport() {
+m_exportreport_revert() {
   # No-op: exported files are intentionally left on Desktop
   true
 }
+
+# Backwards compatibility (legacy function names)
+apply_exportreport() { m_exportreport_apply; }
+revert_exportreport() { m_exportreport_revert; }
