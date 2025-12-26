@@ -215,6 +215,7 @@ progress_bar() {
   local label="${3:-}"
 
   [[ "$total" -gt 0 ]] || return 0
+  [[ -t 1 ]] || return 0
 
   local width=28
   local percent=$((current * 100 / total))
@@ -224,12 +225,13 @@ progress_bar() {
   bar="$(printf "%${filled}s" "" | tr ' ' '#')"
   bar="$bar$(printf "%${empty}s" "" | tr ' ' '-')"
 
-  printf "\r[%s] %3d%% (%d/%d) %s" "$bar" "$percent" "$current" "$total" "$label"
+  printf "\r[%s] %3d%% (%d/%d) %s" "$bar" "$percent" "$current" "$total" "$label" >&2
 }
 
 ###############################################################################
 # progress_done() - Finish a progress bar line
 ###############################################################################
 progress_done() {
-  echo
+  [[ -t 1 ]] || return 0
+  echo >&2
 }
